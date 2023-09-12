@@ -1,18 +1,30 @@
 package ru.asteises.sberbankcityguide.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.asteises.sberbankcityguide.CityGuideService.CityGuideService;
+import ru.asteises.sberbankcityguide.model.CityDto;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class CityGuideController {
 
+    private final CityGuideService cityGuideService;
+
+    // path: src/main/resources/data/cityguide.csv
     @PostMapping("/add")
-    public ResponseEntity<List<String>> addCitiesToGuide(String path) {
-        return null;
+    public ResponseEntity<List<CityDto>> addCitiesToGuide(@RequestParam String path) {
+        log.info("Получили путь к файлу: {}", path);
+        return new ResponseEntity<>(cityGuideService.getCities(path), HttpStatus.OK);
     }
 }
