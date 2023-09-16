@@ -15,14 +15,14 @@ public enum SortEnum {
 
     public static SortEnum getSortByUpperCaseName(String name) {
         if (name == null || name.isEmpty()) {
-            throw new SortEnumNameException("Sort name is empty or null");
+            throw new SortEnumNameException("Не указано имя сортировки, будет применена сортировка по умолчанию");
         }
         for (SortEnum value: values()) {
             if (value.getName().equalsIgnoreCase(name)) {
                 return value;
             }
         }
-        throw new SortEnumNameException("Wrong name for sort enum");
+        throw new SortEnumNameException("Неверное имя сортировки, будет применена сортировка по умолчанию");
     }
 
     public String getName() {

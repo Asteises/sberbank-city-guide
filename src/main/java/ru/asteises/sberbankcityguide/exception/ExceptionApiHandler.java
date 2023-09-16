@@ -6,6 +6,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.asteises.sberbankcityguide.exception.exc.SortEnumNameException;
+import ru.asteises.sberbankcityguide.exception.exc.WrongFilePathException;
 
 import java.io.FileNotFoundException;
 
@@ -13,19 +14,31 @@ import java.io.FileNotFoundException;
 public class ExceptionApiHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<String> handleMissingRequestParameterException(MissingServletRequestParameterException e) {
+    public ResponseEntity<String> handleMissingRequestParameterException(
+            MissingServletRequestParameterException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("RequestParam (String path) - параметр запроса не может быть пустым");
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(WrongFilePathException.class)
+    public ResponseEntity<String> handleWrongFilePathException(WrongFilePathException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler(FileNotFoundException.class)
-    public String handleFileNotFoundException(FileNotFoundException exception) {
-        return "Файл не найден: " + exception.getMessage();
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler(SortEnumNameException.class)
-    public String handleSortEnumNameException(SortEnumNameException exception) {
-        return exception.getMessage();
+    public ResponseEntity<String> handleSortEnumNameException(SortEnumNameException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 }
