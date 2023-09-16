@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.asteises.sberbankcityguide.exception.exc.SortEnumNameException;
 
 import java.io.FileNotFoundException;
 
@@ -21,5 +22,10 @@ public class ExceptionApiHandler {
     @ExceptionHandler(FileNotFoundException.class)
     public String handleFileNotFoundException(FileNotFoundException exception) {
         return "Файл не найден: " + exception.getMessage();
+    }
+
+    @ExceptionHandler(SortEnumNameException.class)
+    public String handleSortEnumNameException(SortEnumNameException exception) {
+        return exception.getMessage();
     }
 }
