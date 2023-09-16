@@ -18,9 +18,8 @@ public class ExceptionApiHandler {
                 .body("RequestParam (String path) - параметр запроса не может быть пустым");
     }
 
-    // TODO Почему не получается отловить это исключение в хендлере?
     @ExceptionHandler(FileNotFoundException.class)
     public String handleFileNotFoundException(FileNotFoundException exception) {
-        return exception.getMessage() + "YES BABY";
+        return "Файл не найден: " + exception.getMessage();
     }
 }

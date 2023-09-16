@@ -1,9 +1,10 @@
 package ru.asteises.sberbankcityguide.parser.impl;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.asteises.sberbankcityguide.model.City;
-import ru.asteises.sberbankcityguide.parser.CityParserService;
+import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ import java.util.Scanner;
 
 @Slf4j
 @Service
-public class CityParserServiceImpl implements CityParserService {
+public class CityCsvParserServiceImpl implements CityCsvParserService {
 
     /**
      * Метод парсит файл по указанному пути.
@@ -21,6 +22,7 @@ public class CityParserServiceImpl implements CityParserService {
      * @param path - String
      * @return - List<List<String>>
      */
+    @SneakyThrows
     @Override
     public List<City> parse(String path) {
         List<List<String>> records = new ArrayList<>();
@@ -30,7 +32,7 @@ public class CityParserServiceImpl implements CityParserService {
                 records.add(getRecordFromLine(str));
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new FileNotFoundException();
         }
         return parseForRecords(records);
     }
@@ -52,7 +54,8 @@ public class CityParserServiceImpl implements CityParserService {
      * @param line - String
      * @return - String[]
      */
-    private String[] splitLine(String line) {
+    @Override
+    public String[] splitLine(String line) {
         return line.split(";", -1);
     }
 
@@ -62,7 +65,8 @@ public class CityParserServiceImpl implements CityParserService {
      * @param records - List<List<String>>
      * @return - List<City>
      */
-    private List<City> parseForRecords(List<List<String>> records) {
+    @Override
+    public List<City> parseForRecords(List<List<String>> records) {
         List<City> cities = new ArrayList<>();
         for (List<String> record : records) {
             cities.add(getCityFromRecord(record));
@@ -76,7 +80,8 @@ public class CityParserServiceImpl implements CityParserService {
      * @param oneCityRecord - List<String>
      * @return - City
      */
-    private City getCityFromRecord(List<String> oneCityRecord) {
+    @Override
+    public City getCityFromRecord(List<String> oneCityRecord) {
         if (oneCityRecord.size() != 6) {
             throw new RuntimeException("Количество значений не соответствует записи в этой таблице");
         }
@@ -105,7 +110,8 @@ public class CityParserServiceImpl implements CityParserService {
      * @param inputValue - String
      * @return - String
      */
-    private String checkEmptyFields(String inputValue) {
+    @Override
+    public String checkEmptyFields(String inputValue) {
         if (inputValue == null || inputValue.isEmpty()) {
             return "none";
         }

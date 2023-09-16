@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.asteises.sberbankcityguide.mapper.CityMapper;
 import ru.asteises.sberbankcityguide.model.City;
 import ru.asteises.sberbankcityguide.model.CityDto;
-import ru.asteises.sberbankcityguide.parser.CityParserService;
+import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
 import ru.asteises.sberbankcityguide.service.CityGuideService;
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 @Service
 public class CityGuideServiceImpl implements CityGuideService {
 
-    private final CityParserService parser;
+    private final CityCsvParserService parser;
 
     /**
-     * Метод парсит файл по ссылке. Возвращает список CityDto.
+     * Метод возвращает список городов из файла по ссылке.
      *
      * @param path - String
      * @return - List<CityDto>

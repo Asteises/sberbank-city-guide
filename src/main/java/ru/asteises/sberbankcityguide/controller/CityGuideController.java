@@ -21,7 +21,6 @@ public class CityGuideController {
 
     private final CityGuideService cityGuideService;
 
-    // path: src/main/resources/data/cityguide.csv
     @PostMapping("/add")
     public ResponseEntity<List<CityDto>> addCitiesToGuide(@RequestParam String path) {
         log.info("Получили путь к файлу: {}", path);
