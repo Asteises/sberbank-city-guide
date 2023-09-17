@@ -39,6 +39,23 @@ public class CityGuideServiceImpl implements CityGuideService {
         return CityMapper.INSTANCE.toDto(cities);
     }
 
+    @Override
+    public CityDto getMaxPopulationCityDto(String path) {
+        City city = getMaxPopulationCity(path);
+        return CityMapper.INSTANCE.toDto(city);
+    }
+
+    @Override
+    public String getMaxPopulationCityShort(String path) {
+        City city = getMaxPopulationCity(path);
+        return city.getId() + " = " + city.getPopulation();
+    }
+
+    private City getMaxPopulationCity(String path) {
+        List<City> cities = getCvsParseCities(path);
+        return sortingService.getMaxPopulationCity(cities);
+    }
+
     private List<City> getCvsParseCities(String path) {
         return cvsParserService.parse(path);
     }

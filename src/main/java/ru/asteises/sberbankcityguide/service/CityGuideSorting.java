@@ -11,4 +11,6 @@ public interface CityGuideSorting {
     void getCitiesSortByName(List<City> cities);
 
     void getCitiesSortByDistrictAndName(List<City> cities);
+
+    City getMaxPopulationCity(List<City> cities);
 }

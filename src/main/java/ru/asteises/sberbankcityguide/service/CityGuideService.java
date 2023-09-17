@@ -11,4 +11,8 @@ public interface CityGuideService {
     List<CityDto> getCities(String path);
 
     List<CityDto> getSortingCities(String path, String sorting);
+
+    CityDto getMaxPopulationCityDto(String path);
+
+    String getMaxPopulationCityShort(String path);
 }

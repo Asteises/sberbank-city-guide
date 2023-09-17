@@ -2,10 +2,12 @@ package ru.asteises.sberbankcityguide.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.asteises.sberbankcityguide.exception.exc.EmptyCityListException;
 import ru.asteises.sberbankcityguide.model.City;
 import ru.asteises.sberbankcityguide.service.CityGuideSorting;
 import ru.asteises.sberbankcityguide.util.enums.sort.SortEnum;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,5 +36,13 @@ public class CityGuideSortingImpl implements CityGuideSorting {
         cities
                 .sort(Comparator.comparing(City::getDistrict)
                         .thenComparing(City::getName));
+    }
+
+    @Override
+    public City getMaxPopulationCity(List<City> cities) {
+        City[] citiesArray = cities.toArray(new City[0]);
+        return Arrays.stream(citiesArray)
+                .max(Comparator.comparing(City::getPopulation))
+                .orElseThrow(() -> new EmptyCityListException("На сортировку передан пустой лист"));
     }
 }

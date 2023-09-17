@@ -21,8 +21,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Getter
 @Setter
@@ -36,11 +36,12 @@ class CityGuideControllerTest {
     @MockBean
     private CityGuideService service;
 
+    private CityDto cityDto1;
     private List<CityDto> cityDtos;
 
     @BeforeEach
     protected void init() {
-        CityDto cityDto1 = new CityDto(
+        cityDto1 = new CityDto(
                 "name_1",
                 "region_1",
                 "district_1",
@@ -126,5 +127,28 @@ class CityGuideControllerTest {
                         .param("sorting", "none"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof SortEnumNameException));
+    }
+
+    @SneakyThrows
+    @Test
+    void getMaxPopulationCity() {
+        Mockito.when(service.getMaxPopulationCityDto(Mockito.anyString())).thenReturn(cityDto1);
+
+        mockMvc.perform(get(Endpoints.API + Endpoints.GET_MAX_POPULATION_CITY)
+                .param("path","src/main/resources/data/cityguide.csv"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(cityDto1.getName()));
+    }
+
+    @SneakyThrows
+    @Test
+    void getMaxPopulationCityShort() {
+        String excepted = "490 = 11514330";
+        Mockito.when(service.getMaxPopulationCityShort(Mockito.anyString())).thenReturn(excepted);
+
+        mockMvc.perform(get(Endpoints.API + Endpoints.GET_MAX_POPULATION_CITY_SHORT)
+                .param("path", "src/main/resources/data/cityguide.csv"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(excepted));
     }
 }
