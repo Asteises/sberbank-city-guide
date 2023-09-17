@@ -3,6 +3,8 @@ package ru.asteises.sberbankcityguide.parser.impl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.asteises.sberbankcityguide.exception.exc.WrongCountTableColumns;
+import ru.asteises.sberbankcityguide.exception.exc.WrongFilePathException;
 import ru.asteises.sberbankcityguide.model.City;
 import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
 
@@ -32,7 +34,7 @@ public class CityCsvParserServiceImpl implements CityCsvParserService {
                 records.add(getRecordFromLine(str));
             }
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException();
+            throw new WrongFilePathException("Файл не найден");
         }
         return parseForRecords(records);
     }
@@ -83,7 +85,7 @@ public class CityCsvParserServiceImpl implements CityCsvParserService {
     @Override
     public City getCityFromRecord(List<String> oneCityRecord) {
         if (oneCityRecord.size() != 6) {
-            throw new RuntimeException("Количество значений не соответствует записи в этой таблице");
+            throw new WrongCountTableColumns("Количество значений не соответствует записи в этой таблице");
         }
         int id = Integer.parseInt(oneCityRecord.get(0));
         String name = oneCityRecord.get(1);

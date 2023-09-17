@@ -9,4 +9,6 @@ import java.util.List;
 public interface CityGuideService {
 
     List<CityDto> getCities(String path);
+
+    List<CityDto> getSortingCities(String path, String sorting);
 }
