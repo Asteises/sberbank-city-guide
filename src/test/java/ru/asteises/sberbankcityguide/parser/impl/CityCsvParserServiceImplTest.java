@@ -1,12 +1,15 @@
-package ru.asteises.sberbankcityguide.mapper;
+package ru.asteises.sberbankcityguide.parser.impl;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.asteises.sberbankcityguide.model.City;
 import ru.asteises.sberbankcityguide.model.CityDto;
+import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
 
 import java.util.List;
 
@@ -14,8 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter
 @Setter
-@WebMvcTest(CityMapper.class)
-class CityMapperTest {
+@ExtendWith(MockitoExtension.class)
+class CityCsvParserServiceImplTest {
+
+    @Autowired
+    private CityCsvParserService service;
+
+    private String path;
     private City city1;
     private City city2;
     private CityDto cityDto1;
@@ -25,6 +33,10 @@ class CityMapperTest {
 
     @BeforeEach
     protected void init() {
+        service = new CityCsvParserServiceImpl();
+
+        path = "src/test/resources/data/test.csv";
+
         city1 = City.builder()
                 .id(1)
                 .name("city_name_1")
@@ -63,30 +75,32 @@ class CityMapperTest {
     }
 
     @Test
-    void toDto() {
-        CityDto target = CityMapper.INSTANCE.toDto(city1);
+    void parse() {
+        List<City> except = cities;
+        List<City> actual = service.parse(path);
 
-        assertThat(target.getName()).isEqualTo(cityDto1.getName());
-        assertThat(target.getRegion()).isEqualTo(cityDto1.getRegion());
-        assertThat(target.getDistrict()).isEqualTo(cityDto1.getDistrict());
-        assertThat(target.getPopulation()).isEqualTo(cityDto1.getPopulation());
-        assertThat(target.getFoundation()).isEqualTo(cityDto1.getFoundation());
+        assertThat(except.size()).isEqualTo(actual.size());
+        assertThat(except.get(0)).isEqualTo(actual.get(0));
+        assertThat(except.get(1)).isEqualTo(actual.get(1));
     }
 
     @Test
-    void testToDto() {
-        List<CityDto> target = CityMapper.INSTANCE.toDto(cities);
+    void getRecordFromLine() {
+    }
 
-        assertThat(target.get(0).getName()).isEqualTo(cityDtos.get(0).getName());
-        assertThat(target.get(0).getRegion()).isEqualTo(cityDtos.get(0).getRegion());
-        assertThat(target.get(0).getDistrict()).isEqualTo(cityDtos.get(0).getDistrict());
-        assertThat(target.get(0).getPopulation()).isEqualTo(cityDtos.get(0).getPopulation());
-        assertThat(target.get(0).getFoundation()).isEqualTo(cityDtos.get(0).getFoundation());
+    @Test
+    void splitLine() {
+    }
 
-        assertThat(target.get(1).getName()).isEqualTo(cityDtos.get(1).getName());
-        assertThat(target.get(1).getRegion()).isEqualTo(cityDtos.get(1).getRegion());
-        assertThat(target.get(1).getDistrict()).isEqualTo(cityDtos.get(1).getDistrict());
-        assertThat(target.get(1).getPopulation()).isEqualTo(cityDtos.get(1).getPopulation());
-        assertThat(target.get(1).getFoundation()).isEqualTo(cityDtos.get(1).getFoundation());
+    @Test
+    void parseForRecords() {
+    }
+
+    @Test
+    void getCityFromRecord() {
+    }
+
+    @Test
+    void checkEmptyFields() {
     }
 }
