@@ -7,4 +7,5 @@ public interface Endpoints {
     String ADD_SORT = "/add/sort";
     String GET_MAX_POPULATION_CITY = "/population/max";
     String GET_MAX_POPULATION_CITY_SHORT = "/population/max/short";
+    String GET_COUNT_CITIES_BY_REGION = "/cities/all/region/count";
 }

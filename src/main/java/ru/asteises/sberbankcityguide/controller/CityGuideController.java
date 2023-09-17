@@ -10,6 +10,7 @@ import ru.asteises.sberbankcityguide.service.CityGuideService;
 import ru.asteises.sberbankcityguide.util.endpoints.Endpoints;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +41,12 @@ public class CityGuideController {
 
     @GetMapping(Endpoints.GET_MAX_POPULATION_CITY_SHORT)
     public ResponseEntity<String> getMaxPopulationCityShort(@RequestParam String path) {
-        log.info("Получили путь к файлу: {}", path);
         return new ResponseEntity<>(cityGuideService.getMaxPopulationCityShort(path), HttpStatus.OK);
+    }
+
+    @GetMapping(Endpoints.GET_COUNT_CITIES_BY_REGION)
+    public ResponseEntity<Map<String, Long>> getCountCitiesByRegion(@RequestParam String path) {
+        log.info("Получили путь к файлу: {}", path);
+        return new ResponseEntity<>(cityGuideService.getCountCitiesByRegion(path), HttpStatus.OK);
     }
 }

@@ -11,6 +11,10 @@ import ru.asteises.sberbankcityguide.service.CityGuideService;
 import ru.asteises.sberbankcityguide.service.CityGuideSorting;
 
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @AllArgsConstructor
@@ -49,6 +53,12 @@ public class CityGuideServiceImpl implements CityGuideService {
     public String getMaxPopulationCityShort(String path) {
         City city = getMaxPopulationCity(path);
         return city.getId() + " = " + city.getPopulation();
+    }
+
+    @Override
+    public Map<String, Long> getCountCitiesByRegion(String path) {
+        List<City> cities = getCvsParseCities(path);
+        return cities.stream().collect(groupingBy(City::getRegion, counting()));
     }
 
     private City getMaxPopulationCity(String path) {

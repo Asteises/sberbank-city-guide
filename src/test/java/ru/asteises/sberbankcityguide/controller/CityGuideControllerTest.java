@@ -3,6 +3,7 @@ package ru.asteises.sberbankcityguide.controller;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +18,9 @@ import ru.asteises.sberbankcityguide.model.CityDto;
 import ru.asteises.sberbankcityguide.service.CityGuideService;
 import ru.asteises.sberbankcityguide.util.endpoints.Endpoints;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +41,7 @@ class CityGuideControllerTest {
 
     private CityDto cityDto1;
     private List<CityDto> cityDtos;
+    private Map<String, Long> citiesCountByRegion;
 
     @BeforeEach
     protected void init() {
@@ -47,13 +51,19 @@ class CityGuideControllerTest {
                 "district_1",
                 1000,
                 "foundation_1");
+
         CityDto cityDto2 = new CityDto(
                 "name_2",
                 "region_2",
                 "district_2",
                 2000,
                 "foundation_2");
+
         cityDtos = List.of(cityDto1, cityDto2);
+
+        citiesCountByRegion = new HashMap<>();
+        citiesCountByRegion.put("region_1", 10L);
+        citiesCountByRegion.put("region_2", 20L);
     }
 
     @SneakyThrows
@@ -131,7 +141,7 @@ class CityGuideControllerTest {
 
     @SneakyThrows
     @Test
-    void getMaxPopulationCity() {
+    void getMaxPopulationCity_Ok() {
         Mockito.when(service.getMaxPopulationCityDto(Mockito.anyString())).thenReturn(cityDto1);
 
         mockMvc.perform(get(Endpoints.API + Endpoints.GET_MAX_POPULATION_CITY)
@@ -142,7 +152,7 @@ class CityGuideControllerTest {
 
     @SneakyThrows
     @Test
-    void getMaxPopulationCityShort() {
+    void getMaxPopulationCityShort_Ok() {
         String excepted = "490 = 11514330";
         Mockito.when(service.getMaxPopulationCityShort(Mockito.anyString())).thenReturn(excepted);
 
@@ -150,5 +160,16 @@ class CityGuideControllerTest {
                 .param("path", "src/main/resources/data/cityguide.csv"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(excepted));
+    }
+
+    @SneakyThrows
+    @Test
+    void getCountCitiesByRegion_Ok() {
+        Mockito.when(service.getCountCitiesByRegion(Mockito.anyString())).thenReturn(citiesCountByRegion);
+
+        mockMvc.perform(get(Endpoints.API + Endpoints.GET_COUNT_CITIES_BY_REGION)
+                .param("path", "src/main/resources/data/cityguide.csv"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasKey("region_1")));
     }
 }
