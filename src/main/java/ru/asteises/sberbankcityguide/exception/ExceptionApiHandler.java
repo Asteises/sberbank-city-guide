@@ -6,6 +6,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.asteises.sberbankcityguide.exception.exc.SortEnumNameException;
+import ru.asteises.sberbankcityguide.exception.exc.WrongCountTableColumns;
 import ru.asteises.sberbankcityguide.exception.exc.WrongFilePathException;
 
 import java.io.FileNotFoundException;
@@ -37,6 +38,13 @@ public class ExceptionApiHandler {
 
     @ExceptionHandler(SortEnumNameException.class)
     public ResponseEntity<String> handleSortEnumNameException(SortEnumNameException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(WrongCountTableColumns.class)
+    public ResponseEntity<String> handleWrongCountTableColumnsException(WrongCountTableColumns exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

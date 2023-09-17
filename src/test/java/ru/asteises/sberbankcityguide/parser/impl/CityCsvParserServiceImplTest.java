@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.asteises.sberbankcityguide.exception.exc.WrongCountTableColumns;
+import ru.asteises.sberbankcityguide.exception.exc.WrongFilePathException;
 import ru.asteises.sberbankcityguide.model.City;
 import ru.asteises.sberbankcityguide.model.CityDto;
 import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
@@ -14,6 +16,8 @@ import ru.asteises.sberbankcityguide.parser.CityCsvParserService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Getter
 @Setter
@@ -75,7 +79,7 @@ class CityCsvParserServiceImplTest {
     }
 
     @Test
-    void parse() {
+    void parse_Ok() {
         List<City> except = cities;
         List<City> actual = service.parse(path);
 
@@ -85,22 +89,84 @@ class CityCsvParserServiceImplTest {
     }
 
     @Test
-    void getRecordFromLine() {
+    void parse_FileNotFound() {
+        Exception exception = assertThrows(
+                WrongFilePathException.class,
+                () -> service.parse("/"));
+
+        String expectedMessage = "Файл не найден";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+    @Test
+    void splitLine_Ok() {
+        String line = "1;name_1;region_1;district_1;1000;foundation_1";
+
+        String[] excepted = {"1", "name_1", "region_1", "district_1", "1000", "foundation_1"};
+        String[] actual = service.splitLine(line);
+
+        assertThat(excepted).isEqualTo(actual);
+        assertThat(excepted.length).isEqualTo(actual.length);
+        assertThat(excepted[0]).isEqualTo(actual[0]);
     }
 
     @Test
-    void splitLine() {
+    void getCityFromRecord_Ok() {
+        List<String> cityRecord = List.of(
+                String.valueOf(city1.getId()),
+                city1.getName(),
+                city1.getRegion(),
+                city1.getDistrict(),
+                String.valueOf(city1.getPopulation()),
+                city1.getFoundation());
+
+        City excepted = city1;
+        City actual = service.getCityFromRecord(cityRecord);
+
+        assertThat(excepted).isEqualTo(actual);
+        assertThat(excepted.getId()).isEqualTo(actual.getId());
+        assertThat(excepted.getName()).isEqualTo(actual.getName());
     }
 
     @Test
-    void parseForRecords() {
+    void getCityFromRecord_wrongCountTableColumns() {
+        List<String> cityRecord = List.of(
+                String.valueOf(city1.getId()),
+                city1.getName(),
+                city1.getRegion(),
+                city1.getDistrict(),
+                String.valueOf(city1.getPopulation()));
+
+        Exception exception = assertThrows(
+                WrongCountTableColumns.class,
+                () -> service.getCityFromRecord(cityRecord));
+
+        String exceptedMessage = "Количество значений не соответствует записи в этой таблице";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(exceptedMessage));
     }
 
     @Test
-    void getCityFromRecord() {
+    void checkEmptyFields_emptyValue() {
+        String inputValue = "";
+
+        String excepted = "none";
+        String actual = service.checkEmptyFields(inputValue);
+
+        assertThat(excepted).isEqualTo(actual);
     }
 
     @Test
-    void checkEmptyFields() {
+    void checkEmptyFields_Ok() {
+        String inputValue = "region";
+
+        String excepted = "region";
+        String actual = service.checkEmptyFields(inputValue);
+
+        assertThat(excepted).isEqualTo(actual);
     }
 }
